@@ -23,7 +23,17 @@ function login() {
     })
     .then((res) => res.json()) // 서버에서 응답한 데이터를 다시 받으려면 then() 메소드를 사용해서 데이터를 가져올 수 있음. res가 파라미터로 전달됨. res.json()을 반환
     // .then((res) => console.log(res));
-    .then(console.log);
+    // .then(console.log);
+    .then((res) => {
+        if(res.success) { // res에서 success이라는 값이 true이면
+            location.href = "/"; // 이 링크로 이동시켜줌
+        } else {
+            alert(res.msg);
+        };
+    })
+    .catch((err) => {
+        console.error(new Error("로그인 중 에러 발생"));
+    });
 }; // 이러한 데이터를 서버에서 받으려면 /login 경로, POST 메서드로 데이터를 받을 수 있는 API가 마련되어있어야 함
 
 /* res.json()의 반환 값은 Promise다.
