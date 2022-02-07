@@ -16,12 +16,18 @@ class UserStorage { // class
     const newUsers = fields.reduce((newUsers, field) => { // reduce: 배열 메소드(반복문). fields에 대한 원소가 하나씩 순회가 됨, 새로운 오브젝트가 생성될거 newUsers
       // newUsers에는 fields라는 배열의 초기값이 들어가고,
       // 그 다음 변수는 field에 들어감
-      console.log(newUsers, field); // id, password
-    }, {}); // newUsers의 초기값을 맘대로 지정해줄 수 있음. 여기서는 빈 오브젝트로 만들었음, {}
-    
+      // console.log(newUsers, field); // id, password
+      if(users.hasOwnProperty(field)) { // users에 해당하는 키 값이 있는지 물어보는 것. 있으면 true
+        // field에 id라는게 처음 들어오고 id라는 키가 있으면 이에 해당하는 키와 값을 밑에 줄 {}에 넣어준다.
+        newUsers[field] = users[field];
+      };
+      return newUsers; // 이 리턴해낸 newUsers가 다음 파라미터인 newUsers로 들어가게 된다.
+    }, {}); // newUsers의 초기값을 맘대로 지정해줄 수 있음. 여기서는 빈 오브젝트로 만들었음, {}, 이 오브젝트가 newUsers에 들어가서 빈 오브젝트가 만들어짐
+    // console.log(newUsers);
+    return newUsers;    
     // return this.#users;
   } // 이 메소드를 호출하면 새로운 user 정보, id, pw만 만들어서 전달해야함
-}
+};
 
 // 데이터를 은닉화 시켜주고 메서드로 전달해줌
 
