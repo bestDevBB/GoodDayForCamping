@@ -12,6 +12,10 @@ const output = {
     login: (req, res) => {
         res.render('home/login.ejs');
         console.log(req.url, '/login 화면');
+    },
+    register: (req, res) => {
+        res.render('home/register.ejs');
+        console.log(req.url, '/register 화면');
     }
 };
 
