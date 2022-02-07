@@ -27,6 +27,17 @@ class UserStorage { // class
     return newUsers;    
     // return this.#users;
   } // 이 메소드를 호출하면 새로운 user 정보, id, pw만 만들어서 전달해야함
+
+  static getUserInfo(id) { // User.js의 login()에 getUserInfo하고 id 값을 던짐
+    const users = this.#users;
+    const idx = users.id.indexOf(id); // getUserInfo의 파라미터로 넘겨준 (id)
+    const usersKeys = Object.keys(users); // users의 키값들만 list로 만듦 => [id, password, name]
+    const userInfo = usersKeys.reduce((newUser, info) => { // [id, password, name]를 usersKeys에 넣어서 배열에 reduce를 돌려줌/ newUser의 초기값으로는 {}를 넣어줬음
+      newUser[info] = users[info][idx]; // newUser에 키값이 순차적으로 들어감(처음에는 id) // users의 키값의 idx
+      return newUser;
+    }, {});
+    return userInfo;
+  }
 };
 
 // 데이터를 은닉화 시켜주고 메서드로 전달해줌
