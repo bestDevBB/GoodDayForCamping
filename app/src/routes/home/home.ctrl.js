@@ -4,7 +4,7 @@ const UserStorage = require('../../models/UserStorage.js')
 
 const output = {
     home: (req, res) => {
-        res.render('home/index.ejs'); // views라는 폴더로 지정해놨기 때문에 home 폴더부터.
+        res.render('home/index.ejs'); // views라는 폴더로 지정해놨기 때문에 home 폴더부터
         console.log(req.url, "/ 화면");
     },    
     login: (req, res) => {
