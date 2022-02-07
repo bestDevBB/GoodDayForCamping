@@ -23,6 +23,6 @@ class UserStorage { // class
   } // 이 메소드를 호출하면 새로운 user 정보, id, pw만 만들어서 전달해야함
 }
 
-// 데이터를 은닉화 시켜주고 메서드로 전달해줌
+// 데이터를 은닉화 시켜주고 메서드로 전달해줌!
 
 module.exports = UserStorage;
