@@ -38,7 +38,18 @@ class UserStorage { // class
     }, {});
     return userInfo;
   }
+
+  static save(userInfo) {
+    // User.js에서 save메서드에 파라미터로 client 데이터를 던져주기 때문에 이 save 함수에서는 이 해당 데이터가 유저의 정보이기 때문에 userInfo로 받음
+    const users = this.#users;
+    users.id.push(userInfo.id);
+    users.name.push(userInfo.name);
+    users.password.push(userInfo.password);
+    // 클라이언트에서 데이터를 전달하면 users 오브젝트 안에 해당 데이터들이 저장이 되야함
+    return { success: true };
+  }
 };
+
 
 // 데이터를 은닉화 시켜주고 메서드로 전달해줌
 

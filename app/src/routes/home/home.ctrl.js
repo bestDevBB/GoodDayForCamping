@@ -19,6 +19,7 @@ const output = {
     }
 };
 
+
 const process = {
     login: (req, res) => {
         // 이 컨트롤러는 UserStorage에 접근하지 않음!
@@ -67,6 +68,11 @@ const process = {
         // //     // success: false,
         // //     // msg: "로그인에 실패하셨습니다."
         // // });
+    },
+    register: (req, res) => {
+        const user = new User(req.body);
+        const response = user.register();
+        return res.json(response);
     }
 };
 
