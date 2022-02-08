@@ -21,12 +21,12 @@ const output = {
 
 
 const process = {
-    login: (req, res) => {
+    login: async (req, res) => {
         // 이 컨트롤러는 UserStorage에 접근하지 않음!
         const user = new User(req.body); // 이 body가 User.js의 User클래스의 생성자의 body로 들어감
         // User라는 클래스를 인스턴스화할 때 클라이언트가 전달한 req 데이터를 넣어서 인스턴스화를 함
         // user는 User.js의 User 클래스의 body를 계속 들고다니게 됨
-        const response = user.login(); // 어떠한 response를 받을거고
+        const response = await user.login(); // 어떠한 response를 받을거고
         // user가 login이라는 메소드를 호출하면 User.js의 User클래스의 this.body를 가져와서 body의 id 값,
         // 즉 클라이언트가 입력한 id 값을 UserStorage의 메소드(getUserInfo)로 전달을 함.
         // id에 해당하는 정보를 이 클래스가 반환함

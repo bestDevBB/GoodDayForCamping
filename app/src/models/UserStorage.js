@@ -1,18 +1,32 @@
 "use strict";
 
+const fs = require('fs').promises; // filesystem
+
 class UserStorage { // class
   // class 자체에서 users에 접근하고자 할 떄는 변수에 static을 선언해서 정적 변수로 만들어줌
-  static #users = { // const같은 선언자 필요 없음
-    // #는 public한 변수에서 private한 변수로 선언해줌. 외부에서 불러올 수 없게함
-    id: ["BB", "Moong", "ZOE"],
-    password: ["1234", "123456", "1111"],
-    name: ["LBR", "뭉이", "조이"]
-  };
+  // static #users = { // const같은 선언자 필요 없음
+  //   // #는 public한 변수에서 private한 변수로 선언해줌. 외부에서 불러올 수 없게함
+  //   id: ["BB", "Moong", "ZOE"],
+  //   password: ["1234", "123456", "1111"],
+  //   name: ["LBR", "뭉이", "조이"]
+  // };
+
+  static #getUserInfo(data, id) { // 위에 getUserInfo() 함수랑 다른거임!
+    const users = JSON.parse(data);
+      const idx = users.id.indexOf(id); // getUserInfo의 파라미터로 넘겨준 (id)
+      const usersKeys = Object.keys(users); // users의 키값들만 list로 만듦 => [id, password, name]
+      const userInfo = usersKeys.reduce((newUser, info) => { // [id, password, name]를 usersKeys에 넣어서 배열에 reduce를 돌려줌/ newUser의 초기값으로는 {}를 넣어줬음
+        newUser[info] = users[info][idx]; // newUser에 키값이 순차적으로 들어감(처음에는 id) // users의 키값의 idx
+        return newUser;
+      }, {});
+      // console.log(userInfo);
+      return userInfo; // getUserInfo가 반환하는 건 userInfo
+  }
 
   // 외부에서 데이터를 받을 수 있게
   static getUsers(...fields) { // class 자체에서 메서드에 접근을 하려면 또한 static을 붙혀줌
     // console.log(fields); // 변수명에 파라미터로 넘긴 데이터들이 배열 형태로 들어옴, ['id', 'password']
-    const users = this.#users;
+    // const users = this.#users;
     const newUsers = fields.reduce((newUsers, field) => { // reduce: 배열 메소드(반복문). fields에 대한 원소가 하나씩 순회가 됨, 새로운 오브젝트가 생성될거 newUsers
       // newUsers에는 fields라는 배열의 초기값이 들어가고,
       // 그 다음 변수는 field에 들어감
@@ -29,19 +43,35 @@ class UserStorage { // class
   } // 이 메소드를 호출하면 새로운 user 정보, id, pw만 만들어서 전달해야함
 
   static getUserInfo(id) { // User.js의 login()에 getUserInfo하고 id 값을 던짐
-    const users = this.#users;
-    const idx = users.id.indexOf(id); // getUserInfo의 파라미터로 넘겨준 (id)
-    const usersKeys = Object.keys(users); // users의 키값들만 list로 만듦 => [id, password, name]
-    const userInfo = usersKeys.reduce((newUser, info) => { // [id, password, name]를 usersKeys에 넣어서 배열에 reduce를 돌려줌/ newUser의 초기값으로는 {}를 넣어줬음
-      newUser[info] = users[info][idx]; // newUser에 키값이 순차적으로 들어감(처음에는 id) // users의 키값의 idx
-      return newUser;
-    }, {});
-    return userInfo;
+    // const users = this.#users;
+    return fs.readFile('./src/databases/users.json') // .는 app.js가 있는 경로
+    // readFile 자체에서 promise를 제공, 반환
+    // promise를 반환하면 then이라는 메소드에 접근할 수 있음
+      .then((data) => {
+        return this.#getUserInfo(data, id);
+      }) // 해당 로직이 성공했을 때 실행
+
+      // .catch((err) => console.log(err));
+      .catch(console.error); // promise 반환하는 것에 대한 오류처리
+      // 함수를 실행시키는데 파라미터로 넘어온 변수를 실행시키는 함수로 똑같이 넘기게 되면 생략 가능
+
+    // , (err, data) => { // 에러와 파일의 데이터
+    //   if(err) throw err;
+      // const users = JSON.parse(data);
+      // const idx = users.id.indexOf(id); // getUserInfo의 파라미터로 넘겨준 (id)
+      // const usersKeys = Object.keys(users); // users의 키값들만 list로 만듦 => [id, password, name]
+      // const userInfo = usersKeys.reduce((newUser, info) => { // [id, password, name]를 usersKeys에 넣어서 배열에 reduce를 돌려줌/ newUser의 초기값으로는 {}를 넣어줬음
+      //   newUser[info] = users[info][idx]; // newUser에 키값이 순차적으로 들어감(처음에는 id) // users의 키값의 idx
+      //   return newUser;
+      // }, {});
+
+      // return userInfo;
+    // });
   }
 
   static save(userInfo) {
     // User.js에서 save메서드에 파라미터로 client 데이터를 던져주기 때문에 이 save 함수에서는 이 해당 데이터가 유저의 정보이기 때문에 userInfo로 받음
-    const users = this.#users;
+    // const users = this.#users;
     users.id.push(userInfo.id);
     users.name.push(userInfo.name);
     users.password.push(userInfo.password);
