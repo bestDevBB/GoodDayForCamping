@@ -37,10 +37,20 @@ class User {
         return { success: false, msg: "존재하지 않는 아이디입니다."};
     }
 
-    register() {
+    async register() {
         const client = this.body;
-        const response = UserStorage.save(client);
-        return response;
+        try { // async/await은 try/catch로 에러처리
+            const response = await UserStorage.save(client); // UserStorage.js의 save함수
+            // client를 storage에 저장하는데에 시간이 오래 걸리므로 모두 저장할 때까지 기다리라고 await
+            return response;
+
+            // UserStorage에서 중복된 아이디를 클라이언트가 입력해서 회원가입을 누르면
+            // 이미 존재하는 아이디입니다라는 에러를 만들어서 유저에게 반환
+
+        } catch(err) {
+            // console.error(err);
+            return { success: false, msg: err }; // error를 object로 던짐
+        }
     }
 };
 

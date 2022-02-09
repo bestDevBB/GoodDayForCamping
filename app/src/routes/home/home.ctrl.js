@@ -69,9 +69,9 @@ const process = {
         // //     // msg: "로그인에 실패하셨습니다."
         // // });
     },
-    register: (req, res) => {
+    register: async (req, res) => {
         const user = new User(req.body);
-        const response = user.register();
+        const response = await user.register(); // User.js의 register 함수
         return res.json(response);
     }
 };

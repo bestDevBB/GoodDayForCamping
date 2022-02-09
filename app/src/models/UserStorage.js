@@ -23,23 +23,42 @@ class UserStorage { // class
       return userInfo; // getUserInfo가 반환하는 건 userInfo
   }
 
-  // 외부에서 데이터를 받을 수 있게
-  static getUsers(...fields) { // class 자체에서 메서드에 접근을 하려면 또한 static을 붙혀줌
-    // console.log(fields); // 변수명에 파라미터로 넘긴 데이터들이 배열 형태로 들어옴, ['id', 'password']
-    // const users = this.#users;
-    const newUsers = fields.reduce((newUsers, field) => { // reduce: 배열 메소드(반복문). fields에 대한 원소가 하나씩 순회가 됨, 새로운 오브젝트가 생성될거 newUsers
-      // newUsers에는 fields라는 배열의 초기값이 들어가고,
-      // 그 다음 변수는 field에 들어감
-      // console.log(newUsers, field); // id, password
-      if(users.hasOwnProperty(field)) { // users에 해당하는 키 값이 있는지 물어보는 것. 있으면 true
-        // field에 id라는게 처음 들어오고 id라는 키가 있으면 이에 해당하는 키와 값을 밑에 줄 {}에 넣어준다.
+  static #getUsers(data, isAll, fields) {
+    const users = JSON.parse(data);
+    if(isAll) return users;
+    const newUsers = fields.reduce((newUsers, field) => {
+      if(users.hasOwnProperty(field)) {
         newUsers[field] = users[field];
       };
-      return newUsers; // 이 리턴해낸 newUsers가 다음 파라미터인 newUsers로 들어가게 된다.
-    }, {}); // newUsers의 초기값을 맘대로 지정해줄 수 있음. 여기서는 빈 오브젝트로 만들었음, {}, 이 오브젝트가 newUsers에 들어가서 빈 오브젝트가 만들어짐
-    // console.log(newUsers);
+      return newUsers;
+    }, {});
     return newUsers;    
-    // return this.#users;
+  }
+
+  // 외부에서 데이터를 받을 수 있게 / users를 불러오는 메소드
+  static getUsers(isAll, ...fields) { // class 자체에서 메서드에 접근을 하려면 또한 static을 붙혀줌
+    return fs.readFile('./src/databases/users.json')
+      .then((data) => {
+        return this.#getUsers(data, isAll, fields);
+      })
+      .catch(console.error); 
+
+
+    // // console.log(fields); // 변수명에 파라미터로 넘긴 데이터들이 배열 형태로 들어옴, ['id', 'password']
+    // // const users = this.#users;
+    // const newUsers = fields.reduce((newUsers, field) => { // reduce: 배열 메소드(반복문). fields에 대한 원소가 하나씩 순회가 됨, 새로운 오브젝트가 생성될거 newUsers
+    //   // newUsers에는 fields라는 배열의 초기값이 들어가고,
+    //   // 그 다음 변수는 field에 들어감
+    //   // console.log(newUsers, field); // id, password
+    //   if(users.hasOwnProperty(field)) { // users에 해당하는 키 값이 있는지 물어보는 것. 있으면 true
+    //     // field에 id라는게 처음 들어오고 id라는 키가 있으면 이에 해당하는 키와 값을 밑에 줄 {}에 넣어준다.
+    //     newUsers[field] = users[field];
+    //   };
+    //   return newUsers; // 이 리턴해낸 newUsers가 다음 파라미터인 newUsers로 들어가게 된다.
+    // }, {}); // newUsers의 초기값을 맘대로 지정해줄 수 있음. 여기서는 빈 오브젝트로 만들었음, {}, 이 오브젝트가 newUsers에 들어가서 빈 오브젝트가 만들어짐
+    // // console.log(newUsers);
+    // return newUsers;    
+    // // return this.#users;
   } // 이 메소드를 호출하면 새로운 user 정보, id, pw만 만들어서 전달해야함
 
   static getUserInfo(id) { // User.js의 login()에 getUserInfo하고 id 값을 던짐
@@ -69,13 +88,31 @@ class UserStorage { // class
     // });
   }
 
-  static save(userInfo) {
+  static async save(userInfo) {
     // User.js에서 save메서드에 파라미터로 client 데이터를 던져주기 때문에 이 save 함수에서는 이 해당 데이터가 유저의 정보이기 때문에 userInfo로 받음
     // const users = this.#users;
+    // users.id.push(userInfo.id);
+    // users.name.push(userInfo.name);
+    // users.password.push(userInfo.password);
+    // // 클라이언트에서 데이터를 전달하면 users 오브젝트 안에 해당 데이터들이 저장이 되야함
+    // return { success: true };
+
+    // const users = await this.getUsers("id", "password", "name"); // 모든 파라미터 다 받아서 데이터를 오브젝트 형태로 반환, 이 users가 Promise를 가지고 있음, pending상태가 뜸. 데이터를 다 읽어오지 못했기 때문에 await를 걸어줌
+    const users = await this.getUsers(true); // true를 걸어준건 모든 값을 다 가져오겠다는 의미
+    if(users.id.includes(userInfo.id)) { // 클라이언트가 입력한 id가 DB의 users 테이블에 존재하는 id라면
+      // return new Error("이미 존재하는 아이디입니다.");
+      // throw Error("이미 존재하는 아이디입니다.");
+      throw "이미 존재하는 아이디입니다.";
+      // 문자열을 error로 throw
+    };
+
     users.id.push(userInfo.id);
     users.name.push(userInfo.name);
     users.password.push(userInfo.password);
-    // 클라이언트에서 데이터를 전달하면 users 오브젝트 안에 해당 데이터들이 저장이 되야함
+    // 데이터 추가
+    fs.writeFile('./src/databases/users.json', JSON.stringify(users)); // 저장할 파일 경로, 저장할 내용 
+    // users 오브젝트를 를 문자열 형태로 바꿔줄건데 오브젝트를 json 형태로 바꿔줄테니 stringify를 씀
+
     return { success: true };
   }
 };
