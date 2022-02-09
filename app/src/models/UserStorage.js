@@ -1,6 +1,7 @@
 "use strict";
 
-const fs = require('fs').promises; // filesystem
+// const fs = require('fs').promises; // filesystem
+const db = require('../config/db.js');
 
 class UserStorage { // class
   // class 자체에서 users에 접근하고자 할 떄는 변수에 static을 선언해서 정적 변수로 만들어줌
@@ -37,11 +38,15 @@ class UserStorage { // class
 
   // 외부에서 데이터를 받을 수 있게 / users를 불러오는 메소드
   static getUsers(isAll, ...fields) { // class 자체에서 메서드에 접근을 하려면 또한 static을 붙혀줌
-    return fs.readFile('./src/databases/users.json')
-      .then((data) => {
-        return this.#getUsers(data, isAll, fields);
-      })
-      .catch(console.error); 
+
+
+
+
+    // return fs.readFile('./src/databases/users.json')
+    //   .then((data) => {
+    //     return this.#getUsers(data, isAll, fields);
+    //   })
+    //   .catch(console.error); 
 
 
     // // console.log(fields); // 변수명에 파라미터로 넘긴 데이터들이 배열 형태로 들어옴, ['id', 'password']
@@ -62,16 +67,25 @@ class UserStorage { // class
   } // 이 메소드를 호출하면 새로운 user 정보, id, pw만 만들어서 전달해야함
 
   static getUserInfo(id) { // User.js의 login()에 getUserInfo하고 id 값을 던짐
-    // const users = this.#users;
-    return fs.readFile('./src/databases/users.json') // .는 app.js가 있는 경로
-    // readFile 자체에서 promise를 제공, 반환
-    // promise를 반환하면 then이라는 메소드에 접근할 수 있음
-      .then((data) => {
-        return this.#getUserInfo(data, id);
-      }) // 해당 로직이 성공했을 때 실행
+    return new Promise((resolve, reject) => {
+      db.query("SELECT * FROM users WHERE id = ?", [id], (err, data) => { // 에러, 읽어온 데이터
+        if(err) reject(err);
+        resolve(data);
+      });
+    // 데이터베이스에 접근 후 유저정보를 반환
+    });
+
+
+    // // const users = this.#users;
+    // return fs.readFile('./src/databases/users.json') // .는 app.js가 있는 경로
+    // // readFile 자체에서 promise를 제공, 반환
+    // // promise를 반환하면 then이라는 메소드에 접근할 수 있음
+    //   .then((data) => {
+    //     return this.#getUserInfo(data, id);
+    //   }) // 해당 로직이 성공했을 때 실행
 
       // .catch((err) => console.log(err));
-      .catch(console.error); // promise 반환하는 것에 대한 오류처리
+      // .catch(console.error); // promise 반환하는 것에 대한 오류처리
       // 함수를 실행시키는데 파라미터로 넘어온 변수를 실행시키는 함수로 똑같이 넘기게 되면 생략 가능
 
     // , (err, data) => { // 에러와 파일의 데이터
@@ -89,6 +103,9 @@ class UserStorage { // class
   }
 
   static async save(userInfo) {
+
+
+
     // User.js에서 save메서드에 파라미터로 client 데이터를 던져주기 때문에 이 save 함수에서는 이 해당 데이터가 유저의 정보이기 때문에 userInfo로 받음
     // const users = this.#users;
     // users.id.push(userInfo.id);
@@ -98,22 +115,22 @@ class UserStorage { // class
     // return { success: true };
 
     // const users = await this.getUsers("id", "password", "name"); // 모든 파라미터 다 받아서 데이터를 오브젝트 형태로 반환, 이 users가 Promise를 가지고 있음, pending상태가 뜸. 데이터를 다 읽어오지 못했기 때문에 await를 걸어줌
-    const users = await this.getUsers(true); // true를 걸어준건 모든 값을 다 가져오겠다는 의미
-    if(users.id.includes(userInfo.id)) { // 클라이언트가 입력한 id가 DB의 users 테이블에 존재하는 id라면
-      // return new Error("이미 존재하는 아이디입니다.");
-      // throw Error("이미 존재하는 아이디입니다.");
-      throw "이미 존재하는 아이디입니다.";
-      // 문자열을 error로 throw
-    };
+    // const users = await this.getUsers(true); // true를 걸어준건 모든 값을 다 가져오겠다는 의미
+    // if(users.id.includes(userInfo.id)) { // 클라이언트가 입력한 id가 DB의 users 테이블에 존재하는 id라면
+    //   // return new Error("이미 존재하는 아이디입니다.");
+    //   // throw Error("이미 존재하는 아이디입니다.");
+    //   throw "이미 존재하는 아이디입니다.";
+    //   // 문자열을 error로 throw
+    // };
 
-    users.id.push(userInfo.id);
-    users.name.push(userInfo.name);
-    users.password.push(userInfo.password);
-    // 데이터 추가
-    fs.writeFile('./src/databases/users.json', JSON.stringify(users)); // 저장할 파일 경로, 저장할 내용 
-    // users 오브젝트를 를 문자열 형태로 바꿔줄건데 오브젝트를 json 형태로 바꿔줄테니 stringify를 씀
+    // users.id.push(userInfo.id);
+    // users.name.push(userInfo.name);
+    // users.password.push(userInfo.password);
+    // // 데이터 추가
+    // fs.writeFile('./src/databases/users.json', JSON.stringify(users)); // 저장할 파일 경로, 저장할 내용 
+    // // users 오브젝트를 를 문자열 형태로 바꿔줄건데 오브젝트를 json 형태로 바꿔줄테니 stringify를 씀
 
-    return { success: true };
+    // return { success: true };
   }
 };
 
