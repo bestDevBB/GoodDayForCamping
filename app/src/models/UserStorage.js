@@ -81,8 +81,8 @@ class UserStorage { // class
       const query = "SELECT * from users WHERE id = $1;";
       db.query(query, [id], (err, data) => { // 에러, 읽어온 데이터
         if(err) reject(`${err}`);
-        resolve(data.rows[0]);
-        console.log(data.rows[0]);
+        else resolve(data.rows[0]);
+        // console.log(data.rows[0]);
       });
     });
 
@@ -120,7 +120,7 @@ class UserStorage { // class
         [userInfo.id, userInfo.name, userInfo.password],
         (err) => {
         if(err) reject(`${err}`);
-        resolve( { success: true });
+        else resolve( { success: true });
       });
     });
 

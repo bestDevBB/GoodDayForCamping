@@ -85,4 +85,8 @@ if(process.env.NODE_ENV !== 'production'){ // 실제 서비스중인 서버가 �
   //   }))
 }
 
+logger.stream = { // logger.stream이라는 키를 만들어서 프로퍼티를 만들고 그 안에 오브젝트를 만듦
+  write: (message) => logger.info(message) // write는 키, logger의 info메소드의 message로 출력할 수 있게
+} // logger.stream을 이용해서 morgan이랑 연결
+
 module.exports = logger;

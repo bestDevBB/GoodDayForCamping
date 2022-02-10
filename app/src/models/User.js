@@ -40,7 +40,8 @@ class User {
             };
             return { success: false, msg: "존재하지 않는 아이디입니다."};
         } catch(err) {
-            return { success: false, msg: err };
+            // return { success: false, err: err };
+            return { success: false, err }; // 키랑 밸류 같으면 키만 입력해도됨
         }
         // if(id){
         //     if(id === client.id && password === client.password) { // storage에서 가져온 id와 클라이언트가 입력한 body에 id가 같고 storage의 password와 클라이언트가 입력한 body의 password가 같은지
@@ -63,7 +64,7 @@ class User {
 
         } catch(err) {
             // console.error(err);
-            return { success: false, msg: err }; // error를 object로 던짐
+            return { success: false, err }; // error를 object로 던짐
         }
     }
 };

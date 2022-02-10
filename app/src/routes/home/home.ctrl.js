@@ -1,19 +1,23 @@
 // 컨트롤러 기능 구현
 "use strict";
 
+const logger = require('../../config/logger.js');
 const User = require('../../models/User.js');
 // const UserStorage = require('../../models/UserStorage.js')
 
 const output = {
     home: (req, res) => {
+        logger.info('GET / 200 "홈 화면으로 이동"');
         res.render('home/index.ejs'); // views라는 폴더로 지정해놨기 때문에 home 폴더부터
         console.log(req.url, "/ 화면");
     },    
     login: (req, res) => {
+        logger.info('GET /login 200 "로그인 화면으로 이동"');
         res.render('home/login.ejs');
         console.log(req.url, '/login 화면');
     },
     register: (req, res) => {
+        logger.info('GET /register 200 "회원가입 화면으로 이동"');
         res.render('home/register.ejs');
         console.log(req.url, '/register 화면');
     }
@@ -31,6 +35,16 @@ const process = {
         // 즉 클라이언트가 입력한 id 값을 UserStorage의 메소드(getUserInfo)로 전달을 함.
         // id에 해당하는 정보를 이 클래스가 반환함
         // 받아올 때는 id랑 password만 받아옴. { id, password, name }이라 하면 name까지 받아옴
+
+        if(response.err) {
+            logger.error(`POST /login 200 Response: "success: ${response.success}, msg: ${response.err}"`)
+            // err만 띄워줘도 오브젝트 형태로 보일거임
+            
+        } else {
+            logger.info(
+                `POST /login 200 Response: "success: ${response.success}, msg: ${response.msg}"`)
+        };
+
         // console.log(response);
         return res.json(response); // 클라이언트한테 json의 형태로 응답해줌
 
@@ -72,6 +86,12 @@ const process = {
     register: async (req, res) => {
         const user = new User(req.body);
         const response = await user.register(); // User.js의 register 함수
+        if(response.err) {
+            logger.error(`POST /register 200 Response: "success: ${response.success}, msg: ${response.err}"`)
+        } else
+        logger.info(
+            `POST /register 200 Response: "success: ${response.success}, msg: ${response.msg}"`
+        )
         return res.json(response);
     }
 };
