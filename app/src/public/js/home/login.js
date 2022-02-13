@@ -25,8 +25,6 @@ function login() {
         body: JSON.stringify(req) // req를 문자열로 바꿔줌
     })
     .then((res) => res.json()) // 서버에서 응답한 데이터를 다시 받으려면 then() 메소드를 사용해서 데이터를 가져올 수 있음. res가 파라미터로 전달됨. res.json()을 반환
-    // .then((res) => console.log(res));
-    // .then(console.log);
     .then((res) => {
         if(res.success) { // res에서 success이라는 값이 true이면
             location.href = "/"; // 이 링크로 이동시켜줌

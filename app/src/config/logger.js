@@ -12,14 +12,10 @@ const printFormat = printf(({ timestamp, label, level, message }) => { // printf
 })
 
 const printLogFormat = {
-  file: combine(
+  file: combine( // 출력하고 싶은 fotmat. combine은 format을 결합
     label({
-    // format.label({
       label: "J&B Proj"
     }),
-    // format: format.combine(
-    // winston.format.colorize(), // 출력하고 싶은 fotmat. combine은 format을 결합
-    // colorize(), // 출력하고 싶은 fotmat. combine은 format을 결합
     timestamp({
       format: "YYYY-MM-DD HH:mm:dd"
     }),
@@ -36,7 +32,6 @@ const opts = {
     filename: "access.log",
     dirname: "./logs",
     level: "info",
-    // format: printLogFormat
     format: printLogFormat.file
   }),
   console: new transports.Console({ // 개발용
@@ -46,43 +41,13 @@ const opts = {
 }
 
 const logger = createLogger({
-  transports: [ opts.file
-    // transports라는 키값에 배열 넣어줬음
-    // new transports.Console({ // 배열 안에는 stranposrts의 인스턴스들을 넣어줌
-    // new transports.File({ // 파일
-    //   // new winston.transports.Console({
-    //   // filename: "./logs/access.log",
-    //   filename: "access.log",
-    //   dirname: "./logs",
-    //   level: "info", // level이 error수준. error수준보다 낮은건 출력이 안됨.
-    //   format: printLogFormat
-    //   // format: combine(
-    //   // // format: format.combine(
-    //   //   // winston.format.colorize(), // 출력하고 싶은 fotmat. combine은 format을 결합
-    //   //   timestamp({
-    //   //     format: "YYYY-MM-DD HH:mm:dd"
-    //   //   }),
-    //   //   json())
-    // })
-  ]
+  transports: [ opts.file ]
 });
 
 
 // 서비스중인 서버인지, 개발중인 서버인지에 따라 자체적으로 콘솔로 찍어줄 수 있게
 if(process.env.NODE_ENV !== 'production'){ // 실제 서비스중인 서버가 아니면
   logger.add(opts.console)
-  // logger.add(new transports.Console({ // 개발용
-  //   // new winston.transports.Console({
-  //     level: "info", // level이 error수준. error수준보다 낮은건 출력이 안됨.
-  //     format: printLogFormat
-  //     // format: combine(
-  //     // // format: format.combine(
-  //     //   // winston.format.colorize(), // 출력하고 싶은 fotmat. combine은 format을 결합
-  //     //   timestamp({
-  //     //     format: "YYYY-MM-DD HH:mm:dd"
-  //     //   }),
-  //     //   json())
-  //   }))
 }
 
 logger.stream = { // logger.stream이라는 키를 만들어서 프로퍼티를 만들고 그 안에 오브젝트를 만듦
