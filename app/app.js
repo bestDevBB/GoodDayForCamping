@@ -21,7 +21,7 @@ app.set("views engine", "ejs"); // html 코드들을 어떤 엔진으로 해석�
 app.use(express.static(`${__dirname}/src/public`)) // 정적 경로 추가, __dirname : 현재 디렉토리명(JB_Camping), app.js 파일이 있는 위치. login.ejs를 login.js에 연결시키기 위해 썼음
 app.use(bodyParser.json()); // bodyparser가 json 데이터를 파싱해올 수 있도록 명시
 // 클라이언트의 요청 데이터 중 json 객체를 파싱할 수 있게 하기 위함
-// URL을 통해 전달되는 데이터에 연결, 공백 등과 같은 문자가 포함될 경우 제대로 인식됮 ㅣ않는 문제를 해결해줌
+// URL을 통해 전달되는 데이터에 연결, 공백 등과 같은 문자가 포함될 경우 제대로 인식되지 않는 문제를 해결해줌
 app.use(bodyParser.urlencoded({ extended: true })); // URL을 통해 전달되는 데이터에 한글, 공백 등과 같은 문자가 포함될 경우 제대로 인식되지 않는 문제 해결
 
 app.use("/", home); // use : 미들웨어를 등록해주는 메소드, / 로 들어오면 home으로 보내줌, "/"을 안써줘도 가동이 됨

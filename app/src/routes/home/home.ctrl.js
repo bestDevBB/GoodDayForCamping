@@ -32,7 +32,9 @@ const output = {
 
 
 const process = {
-    login: async (req, res) => {
+    login: async (req, res) => { // login.js에서 req 데이터를 전달했음
+        // req는 프론트엔드에서 전달한 request 요청 데이터를 담아두는 변수
+
         // 이 컨트롤러는 UserStorage에 접근하지 않음!
         const user = new User(req.body); // 이 body가 User.js의 User클래스의 생성자의 body로 들어감
         // User라는 클래스를 인스턴스화할 때 클라이언트가 전달한 req 데이터를 넣어서 인스턴스화를 함

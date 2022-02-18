@@ -18,7 +18,9 @@ function login() {
         password: password.value
     };
     fetch("/login", { // 로그인을 요청하는 fetch, 서버에 전달
-        method: "POST",
+        // 클라이언트가 입력한 아이디, 비밀번호를 어떤 경로에서 주고받을지 정해야함. /login
+        // 두 번째 파라미터로 전달할 데이터를 object 형태로 보내줌
+        method: "POST", // 데이터 전달해줄 메서드
         headers: {
             "Content-Type": "application/json" // 내가 보내는 데이터의 타입
         }, // JSON 데이터라고 알려줌
